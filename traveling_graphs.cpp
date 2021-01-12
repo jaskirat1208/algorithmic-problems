@@ -62,17 +62,20 @@ class Graph
 	public:
 		Graph();
 		void addEdge(char, char, int);
-		void computeSingleShortestPath(char, char);
+		int computeSingleShortestPath(char, char);
 		void printPath();
 		void printGraph();
 
-	private:		
+	private:
 		// Mapping from letter to vertex(used in graph construction) and vertex to letter(used for printing paths)
 		vector<char> path;			//
 		vector<int> created; 		// To check if vertex has already been created or not
 		// Adjaceny list: implemented as a map: <Src Label> -> [ (<Dest Label, Weight>) ]			
 		ADJ_LIST list;
 
+		// Set of edges for bookkeeping purposes
+		set< pair<char, char> > edges;
+		
 		int getVertexIndex(char u);
 };
 
@@ -108,10 +111,23 @@ void Graph::addEdge(char src, char dest, int length) {
 	int src_vertex_idx = this->getVertexIndex(src);
 	int dest_vertex_idx = this->getVertexIndex(dest);
 
+	// Mark as created: Needed for validation checks
+	this->created[src_vertex_idx] = 1;
+	this->created[dest_vertex_idx] = 1;
+
 	this->list[src_vertex_idx].push_back(make_pair(dest_vertex_idx, length));
 	this->list[dest_vertex_idx].push_back(make_pair(src_vertex_idx, length));
 
-	cout<<src_vertex_idx<<" "<<dest_vertex_idx<<endl;
+	// Push both forward and reverse in the record book to make sure no other back edges are present 
+	pair<int, int> edge_pair = make_pair(src, dest), rev_edge_pair = make_pair(dest, src);
+
+	// Self look or back edge present => throw Logical input Error
+	if (this->edges.find(edge_pair) != this->edges.end() || src == dest)
+		throw ErrorCodes::LogicalInputErrorCode;
+
+	// Insert the edge into edges list for bookkeeping
+	this->edges.insert(edge_pair);
+	this->edges.insert(rev_edge_pair);
 }
 
 /**
@@ -127,6 +143,33 @@ void Graph::printGraph() {
 		}
 		cout<<endl;
 	}
+}
+
+/**
+ * @brief      Calculates the single shortest path in the graph.
+ *
+ * @param[in]  src   The source
+ * @param[in]  dest  The destination
+ *
+ * @return     The single shortest path.
+ */
+int Graph::computeSingleShortestPath(char src, char dest) {
+	int src_vertex_idx = this->getVertexIndex(src);
+	int dest_vertex_idx = this->getVertexIndex(dest);
+
+	if (!this->created[src_vertex_idx] || !this->created[dest_vertex_idx])
+	{
+		throw ErrorCodes::LogicalInputErrorCode;
+	}
+	// Special set to track the vertices for applying dijkstra
+	set<int> special_set;
+	// Storing distances from the source vertex
+	vector<int> distances;
+	// Storig previous vertex for shortest path in order to get the path
+	vector<int> previous;
+
+	// While special set is not full
+	return 100;
 }
 
 /**
@@ -155,6 +198,13 @@ InputParser::InputParser(string line1, string line2) {
 	this->line2 = line2;
 }
 
+/**
+ * @brief      Parsing the edge
+ *
+ * @param[in]  edge  The edge string
+ *
+ * @return     Separated components of the edge: source, destination and weight
+ */
 Path InputParser::parseEdgeStr(string edge) {
 	stringstream ss(edge), patterns;
 	char src='x', dest='y', pattern;
@@ -175,11 +225,6 @@ Path InputParser::parseEdgeStr(string edge) {
 		throw ErrorCodes::InputSyntaxErrorCode;
 	}
 
-	// Path p;
-	// p.src = src;
-	// p.dest = dest;
-	// p.length = weight;
-	
 	return {
 		src, dest, weight
 	};	 
@@ -198,7 +243,7 @@ Graph InputParser::createGraph() {
 		g.addEdge(p.src, p.dest, p.length);
 	}
 
-	g.printGraph();
+	// g.printGraph();
 	return g;
 }
 
@@ -269,11 +314,14 @@ int main() {
 		getline(cin, line1);
 		getline(cin, line2);
 		InputParser parser(line1, line2);
-		parser.createGraph();
+		Graph g = parser.createGraph();
 		Path p = parser.getPathParams();
-		cout<<p.src<<" "<<p.dest<<" "<<p.length;
-		// graph.computeSingleShortestPath(u, v);
+		int shortest_path_len = g.computeSingleShortestPath(p.src, p.dest);
 
+		if (shortest_path_len > p.length)
+		{
+			throw ErrorCodes::FailedToFindPathCode;
+		}
 		// throw ErrorCodes::InputSyntaxErrorCode;
 	}
 	catch(ErrorCodes err_code) {
