@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classShape.html" title="Declaration for interface Shape. " alt="" coords="5,56,64,83"/>
+<area shape="rect" id="node2" href="$classCircle.html" title="Circle class, inheriting Shape. " alt="" coords="125,5,181,32"/>
+<area shape="rect" id="node3" href="$classRectangle.html" title="Rectangle class, inheriting Shape. " alt="" coords="112,56,193,83"/>
+<area shape="rect" id="node4" href="$classTriangle.html" title="Triangle class, inheriting Shape. " alt="" coords="119,107,187,133"/>
+</map>
