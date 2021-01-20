@@ -1,0 +1,15 @@
+/*! \mainpage My Personal Index Page
+ *
+ * \section intro_sec Introduction
+ *
+ * These are some programming problems which I found online and solved them
+ *
+ * \section install_sec Installation
+ * In order to install, follow the following steps:
+ * 
+ * \code{.sh} 
+ * git clone <repo>
+ * make
+ * @endcode
+ *  
+ */
