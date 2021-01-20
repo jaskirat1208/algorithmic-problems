@@ -27,8 +27,16 @@ addons:
 script:
   - make
 
-# Generate and deploy documentation
-after_success:
-  - cd $TRAVIS_BUILD_DIR
-  - chmod +x deploy.sh
-  - ./deploy.sh
+# # Generate and deploy documentation
+# after_success:
+#   - cd $TRAVIS_BUILD_DIR
+#   - chmod +x deploy.sh
+#   - ./deploy.sh
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  local_dir: docs/html
+  github_token: $GH_REPO_TOKEN
+  on:
+    branch: main
