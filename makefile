@@ -6,3 +6,6 @@ all:
 
 clean:
 	rm -rf bin
+
+docs: 
+	doxygen docs/algorithmic-problems
