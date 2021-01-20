@@ -27,12 +27,6 @@ addons:
 script:
   - make docs
 
-# # Generate and deploy documentation
-# after_success:
-#   - cd $TRAVIS_BUILD_DIR
-#   - chmod +x deploy.sh
-#   - ./deploy.sh
-
 deploy:
   provider: pages
   skip_cleanup: true
